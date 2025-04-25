@@ -63,7 +63,6 @@ controls.panSpeed = 1.5;     // 팬 속도
 controls.staticMoving = false;
 controls.dynamicDampingFactor = 0.1
 
-
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.render(scene, camera);
 
