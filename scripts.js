@@ -73,6 +73,7 @@ window.addEventListener('resize', () => {
 
      camera.aspect = sizes.width / sizes.height
      camera.updateProjectionMatrix()
+    camera.lookAt(charMesh)
 
      renderer.setSize(sizes.width, sizes.height)
 
