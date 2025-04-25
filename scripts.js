@@ -57,10 +57,12 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.shadowMap.enabled = true;
 
 const controls = new TrackballControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.008;
 controls.rotateSpeed = 2;
 controls.enableRotate = true;
+controls.panSpeed = 1.5;     // 팬 속도
+controls.staticMoving = false;
+controls.dynamicDampingFactor = 0.1
+
 
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.render(scene, camera);
