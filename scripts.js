@@ -1,13 +1,13 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 const scene = new THREE.Scene();
 
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const mat = new THREE.MeshBasicMaterial({ color: 0xccf3e0 });
-const mesh = new THREE.Mesh(geometry, mat);
-
-scene.add(mesh);
+const color = 0xFFFFFF;
+const intensity = 5;
+const light = new THREE.AmbientLight(color, intensity);
+scene.add(light);
 
 const sizes = {
     // 사용자 웹브라우저 크기 받아오기
@@ -15,41 +15,42 @@ const sizes = {
     height: innerHeight
 }
 
+// 카메라
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
 
-camera.position.z = 3
+camera.position.set(0, 0, -5)
 scene.add(camera)
+
+// glb 불러오기
+let loader = new GLTFLoader();
+
+loader.load(
+    'NONG.glb',
+    gltf => {
+        const charMesh = gltf.scene.children[0]
+        charMesh.position.set(0, -0.5, 0);
+        charMesh.scale.set(0.5, 0.5, 0.5);
+        charMesh.rotation.y = -180 * Math.PI / 180;
+        scene.add(charMesh);
+        camera.lookAt(charMesh)
+    }
+)
 
 const canvas = document.querySelector('canvas.myCanvas');
 
 const renderer = new THREE.WebGLRenderer(
     {
         canvas: canvas
-    })
-
-const axesHelper = new THREE.AxesHelper(3)
-scene.add(axesHelper)
-
-// 위치 변경경
-// mesh.position.set(1.2, 2.5, -1.0)
-// mesh.position.set(0.8, 2.5, 0.2)
-
-// mesh.position.normalize()
-
-// 회전
-mesh.rotation.x = 45 * Math.PI / 180
-mesh.rotation.y = 45 * Math.PI / 180
-mesh.rotation.z = 45 * Math.PI / 180
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
+    }
+)
 
 renderer.setSize(sizes.width, sizes.height);
 
-let isDragging = false
-let oldMousePos = { x: 0, y: 0 }
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.008;
+controls.rotateSpeed = 1.5;
 
-// 렌더링
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.render(scene, camera);
 
@@ -79,29 +80,89 @@ window.addEventListener('dblclick', () => {
     }
 })
 
-renderer.domElement.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    oldMousePos = { x: e.clientX, y: e.clientY }
-})
-
-renderer.domElement.addEventListener('mouseup', (e) => {
-    isDragging = false;
-})
-
-renderer.domElement.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-
-    const deltaMove = {
-        x: e.clientX - oldMousePos.x,
-        y: e.clientY - oldMousePos.y
-    };
-
-    const rotationSpeed = 0.0005;
-
-    // 마우스 드래그에 따라 회전 적용
-    mesh.rotation.y += deltaMove.x * rotationSpeed;
-    mesh.rotation.x += deltaMove.y * rotationSpeed;
-
-    oldMousePos = { x: e.clientX, y: e.clientY };
+function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
     renderer.render(scene, camera);
-});
+}
+animate();
+
+// legacy
+// renderer.domElement.addEventListener('mousedown', (e) => {
+//     isDragging = true;
+//     oldMousePos = { x: e.clientX, y: e.clientY }
+
+//     lastTime = performance.now();
+// })
+
+// renderer.domElement.addEventListener('mouseup', (e) => {
+//     if (!isDragging) return;
+
+//     isDragging = false;
+
+//     // 마우스 버튼을 떼는 시점의 속도를 계산하여 관성 시작
+//     const currentTime = performance.now();
+//     const deltaTime = currentTime - lastTime;
+
+//     // 충분한 시간과 움직임이 있을 때만 속도 계산
+//     if (deltaTime > 5 && (Math.abs(lastDeltaMove.x) > 1 || Math.abs(lastDeltaMove.y) > 1)) {
+//         // 계수 조정으로 더 분명한 관성 효과
+//         const velocityFactor = 0.2; // 관성 강도 조절
+//         rotationVelocity.x = lastDeltaMove.y / deltaTime * velocityFactor;
+//         rotationVelocity.y = lastDeltaMove.x / deltaTime * velocityFactor;
+
+//         // 콘솔로 관성 시작 값 확인 (디버깅용)
+//         // console.log("Starting inertia: ", rotationVelocity);
+//     }
+// })
+
+// renderer.domElement.addEventListener('mousemove', (e) => {
+//     if (!isDragging) return;
+
+//     const currentTime = performance.now();
+//     const deltaTime = currentTime - lastTime;
+
+//     const deltaMove = {
+//         x: e.clientX - oldMousePos.x,
+//         y: e.clientY - oldMousePos.y
+//     };
+
+//     // 회전 속도 계산
+//     const rotationSpeed = 0.0005;
+//     mesh.rotation.y += deltaMove.x * rotationSpeed;
+//     mesh.rotation.x += deltaMove.y * rotationSpeed;
+
+//     // 마지막 이동 정보 저장 (속도가 될 값)
+//     if (deltaTime > 0) {
+//         lastDeltaMove = deltaMove;
+//         lastTime = currentTime;
+//     }
+
+//     oldMousePos = { x: e.clientX, y: e.clientY };
+// });
+// let isDragging = false
+// let oldMousePos = { x: 0, y: 0 }
+// let rotationVelocity = { x: 0, y: 0 };
+// let lastDeltaMove = { x: 0, y: 0 };
+// let lastTime = 0;
+// let dampingFactor = 0.005; // 감쇠 계수 (0~1 사이, 작을수록 빨리 멈춤)
+
+// // 애니메이션 루프에 관성 효과 적용
+// function animate() {
+//     requestAnimationFrame(animate);
+
+//     // 드래그 중이 아닐 때 관성 효과 적용
+//     if (!isDragging && (Math.abs(rotationVelocity.x) > 0.0001 || Math.abs(rotationVelocity.y) > 0.0001)) {
+//         mesh.rotation.x += rotationVelocity.x;
+//         mesh.rotation.y += rotationVelocity.y;
+
+//         // 감쇠 적용 (점점 느려지게)
+//         rotationVelocity.x *= dampingFactor;
+//         rotationVelocity.y *= dampingFactor;
+//     }
+
+//     renderer.render(scene, camera);
+// }
+
+
+// 렌더링
