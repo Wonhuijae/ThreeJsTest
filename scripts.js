@@ -62,7 +62,6 @@ controls.enableRotate = true;
 controls.panSpeed = 1.5;     // 팬 속도
 controls.staticMoving = false;
 controls.dynamicDampingFactor = 0.1
-controls.target.copy(charMesh.position);
 
 
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -80,6 +79,7 @@ window.addEventListener('resize', () => {
 
      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
      renderer.render(scene, camera)
+    console.log("resize")
  });
 
 // window.addEventListener('dblclick', () => {
