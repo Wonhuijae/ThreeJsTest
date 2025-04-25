@@ -33,7 +33,6 @@ loader.load(
     'NONG.glb',
     gltf => {
         charMesh = gltf.scene.children[0]
-        charMesh.position.set(0, -0.5, 0);
         charMesh.scale.set(0.5, 0.5, 0.5);
         charMesh.rotation.y = -180 * Math.PI / 180;
         scene.add(charMesh);
