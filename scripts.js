@@ -2,6 +2,8 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
+let eternalRotate = false;
+
 const scene = new THREE.Scene();
 
 const color = 0xFFFFFF;
@@ -24,10 +26,13 @@ scene.add(camera)
 // glb 불러오기
 let loader = new GLTFLoader();
 
+let charMesh;
+let rotateSpeed = 0.05
+
 loader.load(
     'NONG.glb',
     gltf => {
-        const charMesh = gltf.scene.children[0]
+        charMesh = gltf.scene.children[0]
         charMesh.position.set(0, -0.5, 0);
         charMesh.scale.set(0.5, 0.5, 0.5);
         charMesh.rotation.y = -180 * Math.PI / 180;
@@ -80,8 +85,27 @@ window.addEventListener('dblclick', () => {
     }
 })
 
+document.getElementById("eternalRotateButton").addEventListener('click', btnClick);
+
+function btnClick() {
+    eternalRotate = !eternalRotate;
+}
+
 function animate() {
     requestAnimationFrame(animate);
+
+    if (eternalRotate) {
+        // charMesh.rotation.x += rotateSpeed;
+        charMesh.rotation.y += rotateSpeed;
+
+        // 회전 값 제한 (회전 범위를 -PI ~ PI로 제한)
+        if (charMesh.rotation.x > Math.PI) charMesh.rotation.x -= 2 * Math.PI;
+        if (charMesh.rotation.x < -Math.PI) charMesh.rotation.x += 2 * Math.PI;
+
+        if (charMesh.rotation.y > Math.PI) charMesh.rotation.y -= 2 * Math.PI;
+        if (charMesh.rotation.y < -Math.PI) charMesh.rotation.y += 2 * Math.PI;
+    }
+
     controls.update();
     renderer.render(scene, camera);
 }
