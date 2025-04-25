@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 let eternalRotate = false;
@@ -38,52 +38,58 @@ loader.load(
         charMesh.rotation.y = -180 * Math.PI / 180;
         scene.add(charMesh);
         camera.lookAt(charMesh)
+        charMesh.castShadow = true
     }
 )
+
 
 const canvas = document.querySelector('canvas.myCanvas');
 
 const renderer = new THREE.WebGLRenderer(
     {
-        canvas: canvas
+        canvas: canvas,
+        // alpha: true,
+        antialias: true
     }
 )
 
 renderer.setSize(sizes.width, sizes.height);
+renderer.shadowMap.enabled = true;
 
-const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new TrackballControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.008;
-controls.rotateSpeed = 1.5;
+controls.rotateSpeed = 2;
+controls.enableRotate = true;
 
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.render(scene, camera);
 
 // 이벤트
-window.addEventListener('resize', () => {
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
+// window.addEventListener('resize', () => {
+//     sizes.width = window.innerWidth
+//     sizes.height = window.innerHeight
 
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
+//     camera.aspect = sizes.width / sizes.height
+//     camera.updateProjectionMatrix()
 
-    renderer.setSize(sizes.width, sizes.height)
+//     renderer.setSize(sizes.width, sizes.height)
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.render(scene, camera)
-});
+//     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+//     renderer.render(scene, camera)
+// });
 
-window.addEventListener('dblclick', () => {
+// window.addEventListener('dblclick', () => {
 
-    const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElemnt
+//     const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElemnt
 
-    if (!document.fullscreenElement) {
-        canvas.requestFullscreen()
-    }
-    else {
-        document.exitFullscreen()
-    }
-})
+//     if (!document.fullscreenElement) {
+//         canvas.requestFullscreen()
+//     }
+//     else {
+//         document.exitFullscreen()
+//     }
+// })
 
 document.getElementById("eternalRotateButton").addEventListener('click', btnClick);
 
