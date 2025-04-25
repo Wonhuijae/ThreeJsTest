@@ -36,7 +36,8 @@ loader.load(
         charMesh.scale.set(0.5, 0.5, 0.5);
         charMesh.rotation.y = -180 * Math.PI / 180;
         scene.add(charMesh);
-        camera.lookAt(charMesh)
+        camera.lookAt(charMesh.position)
+        controls.target.copy(charMesh.position);
         charMesh.castShadow = true
     }
 )
@@ -61,6 +62,7 @@ controls.enableRotate = true;
 controls.panSpeed = 1.5;     // 팬 속도
 controls.staticMoving = false;
 controls.dynamicDampingFactor = 0.1
+controls.target.copy(charMesh.position);
 
 
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -73,7 +75,6 @@ window.addEventListener('resize', () => {
 
      camera.aspect = sizes.width / sizes.height
      camera.updateProjectionMatrix()
-    camera.lookAt(charMesh)
 
      renderer.setSize(sizes.width, sizes.height)
 
