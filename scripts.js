@@ -68,18 +68,18 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.render(scene, camera);
 
 // 이벤트
-// window.addEventListener('resize', () => {
-//     sizes.width = window.innerWidth
-//     sizes.height = window.innerHeight
+window.addEventListener('resize', () => {
+     sizes.width = window.innerWidth
+     sizes.height = window.innerHeight
 
-//     camera.aspect = sizes.width / sizes.height
-//     camera.updateProjectionMatrix()
+     camera.aspect = sizes.width / sizes.height
+     camera.updateProjectionMatrix()
 
-//     renderer.setSize(sizes.width, sizes.height)
+     renderer.setSize(sizes.width, sizes.height)
 
-//     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-//     renderer.render(scene, camera)
-// });
+     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+     renderer.render(scene, camera)
+ });
 
 // window.addEventListener('dblclick', () => {
 
