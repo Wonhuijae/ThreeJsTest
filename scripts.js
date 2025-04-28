@@ -7,7 +7,7 @@ let eternalRotate = false;
 const scene = new THREE.Scene();
 
 const color = 0xFFFFFF;
-const intensity = 5;
+const intensity = 2;
 const light = new THREE.AmbientLight(color, intensity);
 scene.add(light);
 
@@ -17,17 +17,41 @@ const sizes = {
     height: innerHeight
 }
 
+// 캔버스
+const canvas = document.querySelector('canvas.myCanvas');
+
+// 렌더러
+const renderer = new THREE.WebGLRenderer(
+    {
+        canvas: canvas,
+        // alpha: true,
+        antialias: true
+    }
+)
+
 // 카메라
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
 
 camera.position.set(0, 0, -5)
 scene.add(camera)
 
+// 컨트롤
+const controls = new TrackballControls(camera, renderer.domElement);
+controls.rotateSpeed = 2;
+controls.enableRotate = true;
+controls.panSpeed = 1.5;     // 팬 속도
+controls.staticMoving = false;
+controls.dynamicDampingFactor = 0.1
+
 // glb 불러오기
 let loader = new GLTFLoader();
-
 let charMesh;
 let rotateSpeed = 0.05
+
+// 음영처리
+const pointLight = new THREE.PointLight(0xffffff, 2, 2, 3);
+pointLight.castShadow = true
+scene.add(pointLight)
 
 loader.load(
     'NONG.glb',
@@ -39,47 +63,32 @@ loader.load(
         camera.lookAt(charMesh.position)
         controls.target.copy(charMesh.position);
         charMesh.castShadow = true
-    }
-)
 
-
-const canvas = document.querySelector('canvas.myCanvas');
-
-const renderer = new THREE.WebGLRenderer(
-    {
-        canvas: canvas,
-        // alpha: true,
-        antialias: true
+        pointLight.position.copy(charMesh.position)
     }
 )
 
 renderer.setSize(sizes.width, sizes.height);
 renderer.shadowMap.enabled = true;
 
-const controls = new TrackballControls(camera, renderer.domElement);
-controls.rotateSpeed = 2;
-controls.enableRotate = true;
-controls.panSpeed = 1.5;     // 팬 속도
-controls.staticMoving = false;
-controls.dynamicDampingFactor = 0.1
-
+// 렌더링
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.render(scene, camera);
 
 // 이벤트
 window.addEventListener('resize', () => {
-     sizes.width = window.innerWidth
-     sizes.height = window.innerHeight
+    sizes.width = window.innerWidth
+    sizes.height = window.innerHeight
 
-     camera.aspect = sizes.width / sizes.height
-     camera.updateProjectionMatrix()
+    camera.aspect = sizes.width / sizes.height
+    camera.updateProjectionMatrix()
 
-     renderer.setSize(sizes.width, sizes.height)
+    renderer.setSize(sizes.width, sizes.height)
 
-     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-     renderer.render(scene, camera)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.render(scene, camera)
     console.log("resize")
- });
+});
 
 // window.addEventListener('dblclick', () => {
 
@@ -195,6 +204,3 @@ animate();
 
 //     renderer.render(scene, camera);
 // }
-
-
-// 렌더링
