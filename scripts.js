@@ -61,9 +61,17 @@ loader.load(
         charMesh.scale.set(0.5, 0.5, 0.5);
         charMesh.rotation.y = -180 * Math.PI / 180;
         scene.add(charMesh);
-        camera.lookAt(charMesh.position)
-        controls.target.copy(charMesh.position);
-        controls.target.y += 0.5
+
+        // 바운딩 박스
+        const box = new THREE.Box3().setFromObject(charMesh);
+        const center = new THREE.Vector3();
+        let centerPos = box.getCenter(center); // 중심점을 구한다.
+
+        camera.lookAt(centerPos)
+        controls.target.copy(centerPos);
+
+        console.log(centerPos)
+
         charMesh.castShadow = true
 
         pointLight.position.copy(charMesh.position)
