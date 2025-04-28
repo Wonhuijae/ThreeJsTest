@@ -37,9 +37,10 @@ scene.add(camera)
 
 // 컨트롤
 const controls = new TrackballControls(camera, renderer.domElement);
-controls.rotateSpeed = 2;
+controls.rotateSpeed = 0.5;
 controls.enableRotate = true;
-controls.panSpeed = 1.5;     // 팬 속도
+controls.panSpeed = 0.05;     // 팬 속도
+controls.zoomSpeed = 0.5
 controls.staticMoving = false;
 controls.dynamicDampingFactor = 0.1
 
@@ -62,6 +63,7 @@ loader.load(
         scene.add(charMesh);
         camera.lookAt(charMesh.position)
         controls.target.copy(charMesh.position);
+        controls.target.y += 0.5
         charMesh.castShadow = true
 
         pointLight.position.copy(charMesh.position)
